@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tindahan SIMS Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Host+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <aside class="side">
+      <div class="brand">Tindahan SIMS</div>
+      <nav aria-label="Views" id="menu">
+        <button data-v="dash" aria-current="page">Dashboard</button
+        ><button data-v="prod">Products</button
+        ><button data-v="sale">Make Sale</button
+        ><button data-v="rep">Sales Report</button>
+      </nav>
+      <p class="side-note">Demo data. Nothing is saved after you reload.</p>
+    </aside>
+    <div class="main">
+      <header class="top">
+        <h1 id="title">Dashboard</h1>
+        <div class="grow"></div>
+        <label class="sr" for="q">Search products</label
+        ><input id="q" type="search" placeholder="Search products" />
+        <button class="btn p" data-go="sale">New sale</button>
+      </header>
+
+      <section id="v-dash" class="view">
+        <div class="kpis">
+          <div class="kpi">
+            <span>Total sales</span><b id="k-total">PHP 0</b>
+          </div>
+          <div class="kpi"><span>Items sold</span><b id="k-items">0</b></div>
+          <div class="kpi"><span>Transactions</span><b id="k-tx">0</b></div>
+          <div class="kpi"><span>Low stock</span><b id="k-low">0</b></div>
+        </div>
+        <div class="two">
+          <div class="card">
+            <h2>Sales by product</h2>
+            <div id="ch-sales"></div>
+          </div>
+          <div class="card">
+            <h2>Stock levels</h2>
+            <div id="ch-stock"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Recent sales</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="n">Quantity</th>
+                <th class="n">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="recent"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="v-prod" class="view" hidden>
+        <div class="card">
+          <div class="cardhead">
+            <h2>Product inventory</h2>
+            <button class="btn p" id="add">Add product</button>
+          </div>
+          <div class="msg" id="pmsg" role="status" aria-live="polite"></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="n">Price</th>
+                <th class="n">Stock</th>
+                <th>Status</th>
+                <th class="n">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inv"></tbody>
+          </table>
+        </div>
+      </section>
+      <dialog id="dlg" aria-labelledby="dtitle">
+        <form id="pform" novalidate method="dialog">
+          <h3 id="dtitle">Add product</h3>
+          <div class="f">
+            <label for="pname">Name</label
+            ><input id="pname" autocomplete="off" />
+          </div>
+          <div class="f">
+            <label for="pprice">Price (PHP)</label
+            ><input id="pprice" type="number" min="0.01" step="0.01" />
+          </div>
+          <div class="f">
+            <label for="pstock">Stock</label
+            ><input id="pstock" type="number" min="0" step="1" />
+          </div>
+          <div class="msg err" id="perr" role="alert"></div>
+          <div class="row">
+            <button class="btn s" type="button" id="pcancel">Cancel</button
+            ><button class="btn p" type="submit" id="psave">Save</button>
+          </div>
+        </form>
+      </dialog>
+      <dialog id="cdlg" aria-labelledby="ctitle">
+        <div class="f">
+          <h3 id="ctitle">Delete product?</h3>
+          <p id="ctext" class="mut"></p>
+        </div>
+        <div class="row">
+          <button class="btn s" type="button" id="cno">Cancel</button
+          ><button class="btn p danger" type="button" id="cyes">Delete</button>
+        </div>
+      </dialog>
+
+      <section id="v-sale" class="view" hidden>
+        <div class="two">
+          <form class="card" id="sale-form" novalidate>
+            <h2>Make sale</h2>
+            <div class="f">
+              <label for="prod">Product</label
+              ><select id="prod"></select>
+            </div>
+            <div class="f">
+              <label for="qty">Quantity</label
+              ><input id="qty" type="number" min="1" step="1" value="1" />
+            </div>
+            <button class="btn p" type="submit">Complete sale</button>
+            <div class="msg" id="msg" role="status" aria-live="polite"></div>
+          </form>
+          <div class="card">
+            <h2>Amount to pay</h2>
+            <div class="big" id="total">PHP 0</div>
+            <p class="mut">
+              Stock is deducted as soon as the sale is completed.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="v-rep" class="view" hidden>
+        <div class="card">
+          <h2>Sales report</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="n">Quantity</th>
+                <th class="n">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="sales"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2"><b>TOTAL SALES</b></td>
+                <td class="n"><b id="grand">PHP 0</b></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
